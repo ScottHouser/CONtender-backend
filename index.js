@@ -1,4 +1,3 @@
-//questionsArray = require('./JsonData/challenges.cjs');
 const webSocketServerPort = 8000;
 const webSocketServer = require('websocket').server;
 const http = require('http');
@@ -36,8 +35,8 @@ const getUniqueID = () => {
 
  
 
-  let shuffleArray = (array) => {
-    let curId = array.length;
+let shuffleArray = (array) => {
+  let curId = array.length;
     // There remain elements to shuffle
     while (0 !== curId) {
       // Pick a remaining element
@@ -48,34 +47,24 @@ const getUniqueID = () => {
       array[curId] = array[randId];
       array[randId] = tmp;
     }
-    return array;
-  }
-
-  //console.log(shuffleArray(challengersArray))
-
-const returnThreeQuestions = () => {
-    let questionIndexSelected = []
-
-    while(questionIndexSelected.length < 3){
-        var r = Math.floor(Math.random() * questionsArray.length);
-        if(questionIndexSelected.indexOf(r) === -1) questionIndexSelected.push(r);
-    }
-
-    let returnArray = [
-        questionsArray[questionIndexSelected[0]],
-        questionsArray[questionIndexSelected[1]],
-        questionsArray[questionIndexSelected[2]],
-    ]
-
-    return(returnArray)
+  return array;
 }
 
-const asignPlayersContenders = () => {
-    let newChallengerArray = [...shuffleArray(challengersArray)]
+const returnThreeQuestions = () => {
+  let questionIndexSelected = []
 
+  while(questionIndexSelected.length < 3){
+    var r = Math.floor(Math.random() * questionsArray.length);
+    if(questionIndexSelected.indexOf(r) === -1) questionIndexSelected.push(r);
+  }
 
-    let arrayOfNumbersContenderLength = newChallengerArray.map((item,index)=>{return(index)})
+  let returnArray = [
+    questionsArray[questionIndexSelected[0]],
+    questionsArray[questionIndexSelected[1]],
+    questionsArray[questionIndexSelected[2]],
+  ]
 
+    return(returnArray)
 }
 
 wsServer.on('request', function (request){
@@ -126,9 +115,7 @@ wsServer.on('request', function (request){
             
             //Make A New Lobby And Add Player Who Created It
             if(JSON.parse(message.utf8Data).type=== 'makeNewLobby'){
-                console.log('make a New Lobby')
                 if(JSON.parse(message.utf8Data).userId === ''){
-                    console.log('makeNewLobbyGO')
                     let newLobbyId = makeid();
                     
                     allGameState[newLobbyId] = {
@@ -153,7 +140,6 @@ wsServer.on('request', function (request){
 
             //Join An Existing Lobby
             if(JSON.parse(message.utf8Data).type === 'joinLobby'){
-                console.log('add player to lobby')
                 if(JSON.parse(message.utf8Data).lobbyId){
                     let submittedLobbyId = JSON.parse(message.utf8Data).lobbyId.toUpperCase();
 
@@ -184,14 +170,12 @@ wsServer.on('request', function (request){
 
             //Start Game
             if(JSON.parse(message.utf8Data).type === 'startTheGame'){
-                console.log('-')
                 if(JSON.parse(message.utf8Data).lobbyId){
                     let submittedLobbyId = JSON.parse(message.utf8Data).lobbyId.toUpperCase();
 
                     if(allGameState[submittedLobbyId]){
                         
                         let threeQuestons = returnThreeQuestions()
-                        console.log(threeQuestons)
                         let stageOfTheGame = 1
                         let directionsToPlayersTakeAction = 'write an answer'
                         let directionsToPlayersAfterAction='Wait for other players to answer'
@@ -265,7 +249,6 @@ wsServer.on('request', function (request){
 
             //Give Game State Update
             if(JSON.parse(message.utf8Data).type === 'giveStateUpdate'){
-                console.log('-')
                 if(JSON.parse(message.utf8Data).lobbyId){
                     let submittedLobbyId = JSON.parse(message.utf8Data).lobbyId.toUpperCase();
 
@@ -283,7 +266,6 @@ wsServer.on('request', function (request){
 
             //Submit Answer
             if(JSON.parse(message.utf8Data).type === 'submitAnswer'){
-                console.log('SUBMIT ANSWER')
                 if(JSON.parse(message.utf8Data).lobbyId){
                     let submittedLobbyId = JSON.parse(message.utf8Data).lobbyId.toUpperCase();
                     let playerId = JSON.parse(message.utf8Data).playerId;
@@ -300,7 +282,6 @@ wsServer.on('request', function (request){
                             numberOfSubmittedAnswers++
                         }
                         if(numberOfSubmittedAnswers >= numberOfPlayers ){
-                            console.log('Increment Stage of the game')
                             allGameState[submittedLobbyId].stageOfTheGame = allGameState[submittedLobbyId].stageOfTheGame+1//advance state of game
 
                             lobbiesAndTheirClients[submittedLobbyId].forEach((clientKey) => {
@@ -341,15 +322,11 @@ wsServer.on('request', function (request){
 
             //Submit Vote For Impostor
             if(JSON.parse(message.utf8Data).type === 'voteForImpostor'){
-                console.log('SUBMIT VOTE')
                 if(JSON.parse(message.utf8Data).lobbyId){
                     let submittedLobbyId = JSON.parse(message.utf8Data).lobbyId.toUpperCase();
                     let playerId = JSON.parse(message.utf8Data).playerId;
                     let submittedVote = JSON.parse(message.utf8Data).submittedVote;
                     if(allGameState[submittedLobbyId]){
-                        //here add impostor vote to correct player
-
-                        //allGameState[submittedLobbyId].questionsAndAnswers[stageOfTheGame - 1].playerAnswers[playerId] = {answer: submittedAnswer, playerName: playerName} 
 
                         allGameState[submittedLobbyId].votesForImpostor.push(submittedVote)
                         allGameState[submittedLobbyId].votesForImpostorWithVoter.push({playerId: playerId, votedFor:submittedVote})
