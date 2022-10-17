@@ -143,7 +143,7 @@ wsServer.on('request', function (request){
                 if(JSON.parse(message.utf8Data).lobbyId){
                     let submittedLobbyId = JSON.parse(message.utf8Data).lobbyId.toUpperCase();
 
-                    if(allGameState[submittedLobbyId]){
+                    if(allGameState[submittedLobbyId] && lobbiesAndTheirClients[submittedLobbyId].length < 7){
                         let newPlayer = {
                             playerID: userID,
                             playerName: JSON.parse(message.utf8Data).userName,
@@ -152,6 +152,7 @@ wsServer.on('request', function (request){
                             playerChoices: []
                         }
 
+                        
                         allGameState[submittedLobbyId].players.push(newPlayer)
                        
                         clientsToLobbies[userID] = submittedLobbyId
@@ -366,7 +367,7 @@ const challengersArray = [
     'Harambe the Gorilla',
     'Leonardo Decaprio',
     'Abraham Lincoln',
-    'arnold schwarzenegger',
+    'Arnold Schwarzenegger',
     'Jason Vorhees',
     'Harry Potter',
     'Micheal Jackson',
@@ -388,7 +389,7 @@ const challengersArray = [
     'Payton Manning',
     'Sacajuea',
     'Justin Beiber',
-    'Jackie chan',
+    'Jackie Chan',
     'me',
     'My mom',
     'My dad',
@@ -396,7 +397,7 @@ const challengersArray = [
     'My grandpa',
     'Luke Skywalker',
     'Ghandi',
-    'The insane clown posse',
+    'The Insane Clown Posse',
     'Dr Frankenstein',
     'Tony Saprano',
     'Batman',
@@ -412,16 +413,16 @@ const challengersArray = [
     'Tekashi 69',
     'Bigfoot',
     'Air bud',
-    'Billy the kid',
+    'Billy the Kid',
     'smokey the bear',
     'the hamburgler',
     'Billey Eilish',
-    'ebinezier scrouge',
+    'Ebenezer Scrooge',
     'Elmo',
-    'Homer simpson',
+    'Homer Simpson',
     'kids birthday clown',
     'Moses',
-    'Stephen king',
+    'Stephen King',
     'Thomas Edison',
     'E.T',
     'My significant other',
@@ -432,6 +433,11 @@ const challengersArray = [
     'Zeus',
     'Hercules',
     'Mary Poppins',
+    'Captain Crunch',
+    'a mideval knight',
+    'a Walmart greeter',
+    'a zombie',
+    'the homeless guy at the bus stop',
 ]
 
 const questionsArray = [
