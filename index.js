@@ -85,7 +85,7 @@ wsServer.on('request', function (request){
         }
        
 
-        if(lobby && allGameState[lobby].players !== undefined){
+        if(lobby && allGameState[lobby]?.players !== undefined){
             console.log('attempt')
 
             let newPlayers = allGameState[lobby].players.filter(item => item.playerID !== id)
@@ -96,16 +96,20 @@ wsServer.on('request', function (request){
                 clients[clientKey].sendUTF(JSON.stringify({ type:'OTHER_PLAYER_ACTION', payload: allGameState[lobby] }));
             })
 
-            if(lobbiesAndTheirClients[lobby].length == 0){
+            lobbiesAndTheirClients[lobby].forEach((clientKey)=>{
+                clients[clientKey].sendUTF(JSON.stringify({ type:'LOBBY_CLOSED', payload: allGameState[lobby] }));
+            })
+
+            //if(lobbiesAndTheirClients[lobby].length == 0){
                 delete lobbiesAndTheirClients[lobby]
-            }
+            //}
         }
         delete clientsToLobbies[lobby]
         delete clients[userID]
 
-        if(lobby && allGameState[lobby].players.length === 0){
+        //if(lobby && allGameState[lobby].players.length === 0){
             delete allGameState[lobby]
-        }
+        //}
         console.log(allGameState)
 
     })
