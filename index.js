@@ -131,7 +131,8 @@ wsServer.on('request', function (request){
                                 isHost: true,
                                 playerChoices: []
                             },
-                        ]
+                        ],
+                        gameHasStarted: false
                     }
                     clientsToLobbies[userID] = newLobbyId
                     lobbiesAndTheirClients[newLobbyId] = []
@@ -147,7 +148,7 @@ wsServer.on('request', function (request){
                 if(JSON.parse(message.utf8Data).lobbyId){
                     let submittedLobbyId = JSON.parse(message.utf8Data).lobbyId.toUpperCase();
 
-                    if(allGameState[submittedLobbyId] && lobbiesAndTheirClients[submittedLobbyId].length < 7){
+                    if(allGameState[submittedLobbyId] && lobbiesAndTheirClients[submittedLobbyId].length < 7 && allGameState[submittedLobbyId].gameHasStarted === false){
                         let newPlayer = {
                             playerID: userID,
                             playerName: JSON.parse(message.utf8Data).userName,
@@ -233,6 +234,7 @@ wsServer.on('request', function (request){
                         allGameState[submittedLobbyId].directionsToPlayersAfterAction = directionsToPlayersAfterAction
                         allGameState[submittedLobbyId].directionsToPlayersTakeAction = directionsToPlayersTakeAction
                         allGameState[submittedLobbyId].questionsAndAnswers = questionsAndAnswers
+                        allGameState[submittedLobbyId].gameHasStarted = true
 
                         connection.sendUTF(JSON.stringify({ type:'GAME_STARTING' }));
 
